@@ -8,13 +8,9 @@ const Cities = require('./Models/cities.model.js')
 const app = express()
 
 //BD conection
-mongoose 
+mongoose
 .connect('mongodb+srv://katerineipuzl:katerineipuzl@testerco.jkcxnya.mongodb.net/cities_population')
 .then(() =>console.log('Conectada a cities_population'))
-
-// Countries
-// .find()
-// .then(country => console.log(country))
 
 //End points
 
