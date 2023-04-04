@@ -3,13 +3,16 @@ const mongoose = require('mongoose')
 const Countries = require('./Models/countries.model.js')
 const States = require('./Models/states.model.js')
 const Cities = require('./Models/cities.model.js')
+require('dotenv').config()
 
 //API
 const app = express()
 
 //BD conection
+const uri = process.env.URI_MONGO
+
 mongoose
-.connect('mongodb+srv://katerineipuzl:katerineipuzl@testerco.jkcxnya.mongodb.net/cities_population')
+.connect(uri)
 .then(() =>console.log('Conectada a cities_population'))
 
 //End points
@@ -55,4 +58,4 @@ app.get('/api/cities/:id_citie', (req, res) => {
 })
 
 const port = 5007
-app.listen(port, () => console.log('servidor levantado'))
+app.listen(port, () => console.log(`servidor levantado http://localhost:${port}`))
