@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const CountriesPage = () => {
+  const [countries, setCountries] = useState([]);
+  fetch("http://localhost:5007/api/countries/")
+    .then((response) => response.json())
+    .then((data) => setCountries(data))
+    .catch((error) => console.error(error));
+
   return (
     <>
       <header>
@@ -9,6 +16,13 @@ const CountriesPage = () => {
       </header>
       <main>
         <p>Paises</p>
+        <ul>
+          {countries.map((item) => (
+            <li key={item.ID_COUNTRY}>
+              <Link to={`/States/${item.ID_COUNTRY}`}>{item.NAME}</Link>
+            </li>
+          ))}
+        </ul>
       </main>
     </>
   );

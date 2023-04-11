@@ -1,19 +1,21 @@
 const express = require('express')
+const cors = require('cors');
 const mongoose = require('mongoose')
 const Countries = require('./Models/countries.model.js')
-const States = require('./Models/states.model.js')
-const Cities = require('./Models/cities.model.js')
 require('dotenv').config()
 
 //API
 const app = express()
+
+//Cors
+app.use(cors())
 
 //BD conection
 const uri = process.env.URI_MONGO
 
 mongoose
 .connect(uri)
-.then(() =>console.log('Conectada a cities_population'))
+.then(() =>console.log('Conectada a Population'))
 
 //End points
 
@@ -23,19 +25,6 @@ app.get('/api/countries/', (req, res) => {
     .then(countries => res.json(countries))
 })
 
-app.get('/api/states/', (req, res) => {
-    States
-    .find()
-    .then(states => res.json(states))
-})
-
-app.get('/api/cities/', (req, res) => {
-    Cities
-    .find()
-    .then(cities => res.json(cities))
-})
-
-
 app.get('/api/countries/:id_country', (req, res) => {
     const { id_country } = req.params
     Countries
@@ -43,18 +32,21 @@ app.get('/api/countries/:id_country', (req, res) => {
     .then(country => res.json(country))
 })
 
-app.get('/api/states/:id_state', (req, res) => {
+app.get('/api/state/:id_state', (req, res) => {
     const { id_state } = req.params
-    States
-    .findOne({'ID_STATE': id_state})
-    .then(state => res.json(state))
+    Countries
+    .findOne({ 'STATES.ID_STATE': id_state })
+    //Acceder al array de STATES y filtra el objeto por el ID que coincide con la busqueda.
+    .then(doc => res.json(doc.STATES.filter(state => state.ID_STATE === Number(id_state)))) 
 })
-
-app.get('/api/cities/:id_citie', (req, res) => {
-    const { id_citie} = req.params
-    Cities
-    .findOne({'ID_CITY': id_citie})
-    .then(city => res.json(city))
+app.get('/api/city/:id_city', (req, res) => {
+    const { id_city } = req.params
+    Countries
+    .findOne({ 'STATES.CITIES.ID_CITY': id_city })
+    .then(doc => doc.STATES)
+    .then(states => states.map(state => state.CITIES.filter(city => city.ID_CITY === Number(id_city))))
+    .then(city => city.flat()[0])
+    .then(result => res.json(result))
 })
 
 const port = 5007
